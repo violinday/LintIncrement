@@ -19,12 +19,7 @@ public class MainActivity extends Activity {
 
         Log.d("tag", "msg");
 
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-
-            }
-        }).run();
+        ConstructionTest.testThread();
     }
 
     private void callNewApi() {
