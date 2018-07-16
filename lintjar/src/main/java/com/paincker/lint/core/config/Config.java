@@ -1,7 +1,9 @@
-package com.paincker.lint.core;
+package com.paincker.lint.core.config;
 
 /**
  * Created by haiyang_tan on 2018/7/13.
+ *
+ * config bean类
  */
 public class Config {
 
