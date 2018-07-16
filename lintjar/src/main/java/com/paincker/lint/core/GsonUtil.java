@@ -1,15 +1,15 @@
 package com.paincker.lint.core;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 
-import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.List;
 
 /**
  * Created by haiyang_tan on 2018/7/13.
+ *
+ * Gson工具类
  */
 public class GsonUtil {
 

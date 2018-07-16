@@ -14,6 +14,6 @@ public class MyIssueRegistry extends IssueRegistry {
     @Override
     public synchronized List<Issue> getIssues() {
         System.out.println("==== my lint start ====");
-        return Arrays.asList(LogDetector.ISSUE, NewThreadDetector.ISSUE);
+        return Arrays.asList(LogDetector.ISSUE, ConfigDetector.CONSTRUCTOR_ISSUE, ConfigDetector.SUPER_CLASS_ISSUE);
     }
 }

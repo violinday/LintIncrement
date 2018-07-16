@@ -1,7 +1,11 @@
-package com.paincker.lint.core;
+package com.paincker.lint.core.config;
+
+import java.util.List;
 
 /**
  * Created by haiyang_tan on 2018/7/13.
+ *
+ * config bean类
  */
 public class Config {
 
@@ -12,8 +16,9 @@ public class Config {
     // 禁止的调用的属性
     public String feild;
     // 禁止调用的方法
-    public String method;
-
+    public List<String> method;
+    // 禁止调用的方法所属的类
+    public String methodByClass;
 
     // error信息
     public String message;

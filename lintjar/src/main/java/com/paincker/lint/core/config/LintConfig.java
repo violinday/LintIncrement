@@ -1,6 +1,7 @@
-package com.paincker.lint.core;
+package com.paincker.lint.core.config;
 
 import com.android.tools.lint.detector.api.Context;
+import com.paincker.lint.core.GsonUtil;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -10,16 +11,18 @@ import java.util.List;
 
 /**
  * Created by haiyang_tan on 2018/7/13.
+ *
+ * 自定义Lint config文件类
  */
 public final class LintConfig {
 
     public static final String TAG = "LintConfig";
 
-    public static final String LINT_CONFIG_FILE = "tt-lint-config.json";
+    private static final String LINT_CONFIG_FILE = "tt-lint-config.json";
 
     private final List<Config> mConfigs;
 
-    LintConfig(Context context) {
+    public LintConfig(Context context) {
         File projectDir = context.getProject().getDir();
         File configFile = new File(projectDir, LINT_CONFIG_FILE);
         // 如果不存在
@@ -28,26 +31,34 @@ public final class LintConfig {
             File mainProjectDir = context.getMainProject().getDir();
             configFile = new File(mainProjectDir, LINT_CONFIG_FILE);
             if (!configFile.exists() || !configFile.isFile()) {
-                throw new RuntimeException("not find config file !");
+                File rootProjectDir = mainProjectDir.getParentFile();
+                configFile = new File(rootProjectDir, LINT_CONFIG_FILE);
+                if (!configFile.exists() || !configFile.isFile()) {
+                    throw new RuntimeException("Not find config file !!");
+                }
             }
         }
         String strConfig = readFile(configFile);
         mConfigs = GsonUtil.jsonStrToList(strConfig, Config.class);
     }
 
+    public List<Config> getConfigs() {
+        return mConfigs;
+    }
+
     private static String readFile(File file) {
         BufferedReader reader = null;
-        StringBuilder laststr = new StringBuilder();
+        StringBuilder lastStr = new StringBuilder();
         try {
             // System.out.println("以行为单位读取文件内容，一次读一整行：");
             reader = new BufferedReader(new FileReader(file));
-            String tempString = null;
+            String tempString;
             int line = 1;
             // 一次读入一行，直到读入null为文件结束
             while ((tempString = reader.readLine()) != null) {
                 // 显示行号
                 System.out.println("line " + line + ": " + tempString);
-                laststr.append(tempString);
+                lastStr.append(tempString);
                 line++;
             }
             reader.close();
@@ -58,9 +69,10 @@ public final class LintConfig {
                 try {
                     reader.close();
                 } catch (IOException e1) {
+                    // do nothing
                 }
             }
         }
-        return laststr.toString();
+        return lastStr.toString();
     }
 }
