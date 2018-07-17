@@ -1,0 +1,23 @@
+apply plugin: 'groovy'
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    // gradle sdk
+    compile gradleApi()
+    // groovy sdk
+    compile localGroovy()
+
+    compile 'com.android.tools.lint:lint-gradle:26.1.3'
+    compile 'com.android.tools.lint:lint-gradle-api:26.1.3'
+    compile 'com.android.tools.build:gradle:3.0.1'
+
+}
+
+repositories {
+    mavenCentral()
+}
+
+tasks.withType(GroovyCompile) {
+    sourceCompatibility = '1.7'
+    targetCompatibility = '1.7'
+}
