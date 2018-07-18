@@ -18,6 +18,7 @@ import com.android.tools.lint.detector.api.Scope;
 import com.android.utils.Pair;
 
 import org.gradle.api.GradleException;
+import org.gradle.api.Project;
 import org.gradle.api.file.FileCollection;
 import org.gradle.api.tasks.InputFiles;
 import org.gradle.api.tasks.Optional;
@@ -34,6 +35,15 @@ public class IncrementLintTask extends LintBaseTask{
 
     public IncrementLintTask() {
         setGroup(GROUP);
+//        AppExtension extension = (AppExtension) getProject().getExtensions().getByName("android");
+//        DomainObjectSet<ApplicationVariant> variants = extension.getApplicationVariants();
+//        for (ApplicationVariant variant : variants) {
+//            if (variants instanceof ApplicationVariantImpl) {
+//                ApplicationVariantImpl variantImpl = (ApplicationVariantImpl) variant;
+//                VariantScope globalScope = variantImpl.getVariantData().getScope();
+//                this.variantInputs = new VariantInputs(globalScope);
+//            }
+//        }
     }
 
     private VariantInputs variantInputs;
@@ -145,10 +155,12 @@ public class IncrementLintTask extends LintBaseTask{
     public static class VitalConfigAction extends BaseConfigAction<IncrementLintTask> {
 
         private final VariantScope scope;
+        private final Project project;
 
-        public VitalConfigAction(@NonNull VariantScope scope) {
+        public VitalConfigAction(@NonNull VariantScope scope, Project project) {
             super(scope.getGlobalScope());
             this.scope = scope;
+            this.project = project;
         }
 
         @NonNull
@@ -175,6 +187,7 @@ public class IncrementLintTask extends LintBaseTask{
             task.setFatalOnly(true);
             task.setDescription(
                     "Runs lint on just the fatal issues in the " + variantName + " build.");
+            project.getTasks().add(task);
         }
     }
 }

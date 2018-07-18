@@ -30,7 +30,7 @@ class IncrementLintClient extends LintGradleClient {
     private List<String> getPostCommitChange() {
         ArrayList<String> filterList = new ArrayList<String>()
         try {
-            String projectDir = modelProject.getBuildFolder().getAbsolutePath()
+            String projectDir = modelProject.getBuildFolder().getParentFile().getAbsolutePath()
             String commond = "git diff --name-only --diff-filter=ACMRTUXB  HEAD~1 HEAD~0 $projectDir"
             String changeInfo = commond.execute(null, gradleProject.getRootDir()).text.trim()
             if (changeInfo == null || changeInfo.empty) {
