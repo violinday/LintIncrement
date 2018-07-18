@@ -1,0 +1,39 @@
+apply plugin: 'groovy'
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    // gradle sdk
+    compile gradleApi()
+    // groovy sdk
+    compile localGroovy()
+
+    compile 'com.android.tools.lint:lint-api:25.3.0'
+    compile 'com.android.tools.lint:lint-checks:25.3.0'
+    compile 'com.android.tools.lint:lint:25.3.0'
+    compile 'com.android.tools.build:gradle:3.0.1'
+}
+
+repositories {
+    google()
+    jcenter()
+    mavenCentral()
+    maven{
+        url 'https://dl.google.com/dl/android/maven2/'
+    }
+    maven {
+        url 'https://maven.google.com'
+    }}
+
+tasks.withType(GroovyCompile) {
+    sourceCompatibility = '1.7'
+    targetCompatibility = '1.7'
+}
+
+//configurations.all {
+//    resolutionStrategy {
+//        force 'org.codehaus.groovy:groovy-all:2.4.11'
+//    }
+//}
+//configurations {
+//    all*.exclude group: 'org.codehaus.groovy', module: 'groovy-all'
+//}

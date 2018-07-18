@@ -22,11 +22,8 @@ class IncrementTask extends LintBaseTask {
 
     private static final String VERSION = "26.1.3"
 
-    private String sdkHome
-
-    IncrementTask(String sdkHome, String ) {
+    IncrementTask() {
         group = GROUP
-        this.sdkHome = sdkHome
     }
 
     @TaskAction

@@ -1,8 +1,11 @@
+import com.lewin.incrementlint.IncrementLintPlugin
+
 apply plugin: 'com.android.application'
+apply plugin: IncrementLintPlugin
 
 android {
     compileSdkVersion 28
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "com.paincker.lint.demo"
@@ -32,5 +35,5 @@ android.applicationVariants.all { variant ->
 
 dependencies {
     // 依赖LintAAR，引入自定义Lint规则
-    compile project(path: ":lintaar")
+    compile project(path: ':lintaar')
 }
