@@ -12,8 +12,9 @@ import com.android.tools.lint.detector.api.Project
 
 class IncrementLintClient extends LintGradleClient {
 
-    private org.gradle.api.Project gradleProject;
-    private AndroidProject modelProject;
+    private org.gradle.api.Project gradleProject
+    private AndroidProject modelProject
+
     IncrementLintClient(IssueRegistry registry, LintCliFlags flags, org.gradle.api.Project gradleProject, AndroidProject modelProject, File sdkHome, Variant variant, LintBaseTask.VariantInputs variantInputs, BuildToolInfo buildToolInfo) {
         super(registry, flags, gradleProject, modelProject, sdkHome, variant, variantInputs, buildToolInfo)
         this.gradleProject = gradleProject
@@ -31,14 +32,15 @@ class IncrementLintClient extends LintGradleClient {
         ArrayList<String> filterList = new ArrayList<String>()
         try {
             String projectDir = modelProject.getBuildFolder().getParentFile().getAbsolutePath()
-            String commond = "git diff --name-only --diff-filter=ACMRTUXB  HEAD~1 HEAD~0 $projectDir"
-            String changeInfo = commond.execute(null, gradleProject.getRootDir()).text.trim()
+            String command = "git diff --name-only --diff-filter=ACMRTUXB HEAD~0 $projectDir"
+            String changeInfo = command.execute(null, gradleProject.getRootDir()).text.trim()
             if (changeInfo == null || changeInfo.empty) {
                 return filterList
             }
+            System.out.println(changeInfo)
             String[] lines = changeInfo.split("\\n")
             return lines.toList()
-        } catch (Exception e) {
+        } catch (Exception ignored) {
             return filterList
         }
     }

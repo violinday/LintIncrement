@@ -5,9 +5,9 @@ repositories {
 }
 
 dependencies {
-    compile 'com.android.tools.lint:lint-api:25.3.0'
-    compile 'com.android.tools.lint:lint-checks:25.3.0'
-    compile 'com.android.tools.lint:lint:25.3.0'
+    compile 'com.android.tools.lint:lint-api:26.0.1'
+    compile 'com.android.tools.lint:lint-checks:26.0.1'
+    compile 'com.android.tools.lint:lint:26.0.1'
 }
 
 jar {

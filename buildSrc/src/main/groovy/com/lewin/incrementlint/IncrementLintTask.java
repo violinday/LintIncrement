@@ -29,21 +29,10 @@ import java.util.List;
 
 public class IncrementLintTask extends LintBaseTask{
 
-    public static final String GROUP = "check";
     public static final String NAME = "LintIncrementTask";
     private boolean fatalOnly;
 
     public IncrementLintTask() {
-        setGroup(GROUP);
-//        AppExtension extension = (AppExtension) getProject().getExtensions().getByName("android");
-//        DomainObjectSet<ApplicationVariant> variants = extension.getApplicationVariants();
-//        for (ApplicationVariant variant : variants) {
-//            if (variants instanceof ApplicationVariantImpl) {
-//                ApplicationVariantImpl variantImpl = (ApplicationVariantImpl) variant;
-//                VariantScope globalScope = variantImpl.getVariantData().getScope();
-//                this.variantInputs = new VariantInputs(globalScope);
-//            }
-//        }
     }
 
     private VariantInputs variantInputs;
@@ -184,7 +173,7 @@ public class IncrementLintTask extends LintBaseTask{
 
             task.variantInputs = new VariantInputs(scope);
 
-            task.setFatalOnly(true);
+            task.setFatalOnly(false);
             task.setDescription(
                     "Runs lint on just the fatal issues in the " + variantName + " build.");
             project.getTasks().add(task);

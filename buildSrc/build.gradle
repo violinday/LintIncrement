@@ -6,9 +6,9 @@ dependencies {
     // groovy sdk
     compile localGroovy()
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile 'com.android.tools.lint:lint-api:25.3.0'
-    compile 'com.android.tools.lint:lint-checks:25.3.0'
-    compile 'com.android.tools.lint:lint:25.3.0'
+    compile 'com.android.tools.lint:lint-api:26.0.1'
+    compile 'com.android.tools.lint:lint-checks:26.0.1'
+    compile 'com.android.tools.lint:lint:26.0.1'
     compile 'com.android.tools.build:gradle:3.0.1'
 }
 
