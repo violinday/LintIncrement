@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Created by jzj on 2017/7/4.
  */
-public class MyIssueRegistry extends IssueRegistry {
+public class CustomIssueRegistry extends IssueRegistry {
 
     @Override
     public synchronized List<Issue> getIssues() {
