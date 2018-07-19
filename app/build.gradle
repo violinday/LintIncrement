@@ -35,5 +35,6 @@ android.applicationVariants.all { variant ->
 
 dependencies {
     // 依赖LintAAR，引入自定义Lint规则
-    compile project(path: ':lintaar')
+//    compile project(path: ':lintaar')
+    lintChecks project(":lintjar")
 }

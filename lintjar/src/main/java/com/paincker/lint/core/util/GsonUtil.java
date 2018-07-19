@@ -1,4 +1,4 @@
-package com.paincker.lint.core;
+package com.paincker.lint.core.util;
 
 import com.google.gson.Gson;
 

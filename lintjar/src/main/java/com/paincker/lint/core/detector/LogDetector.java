@@ -1,4 +1,4 @@
-package com.paincker.lint.core;
+package com.paincker.lint.core.detector;
 
 import com.android.tools.lint.detector.api.Category;
 import com.android.tools.lint.detector.api.Detector;

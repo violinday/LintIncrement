@@ -1,4 +1,4 @@
-package com.paincker.lint.core;
+package com.paincker.lint.core.detector;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;
