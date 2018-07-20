@@ -43,6 +43,10 @@ public class IncrementLintTask extends LintBaseTask{
         this.fatalOnly = fatalOnly;
     }
 
+    public static void logInfo(Project project, String message) {
+        project.getLogger().info(NAME, message);
+    }
+
     private static BuiltinIssueRegistry createIssueRegistry() {
         return new LintGradleIssueRegistry();
     }

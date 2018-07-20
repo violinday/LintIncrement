@@ -1,1 +1,1 @@
-include ':app', ':lintjar', ':buildSrc'
+include ':app', ':lintjar', ':buildSrc', ':libaraytest'

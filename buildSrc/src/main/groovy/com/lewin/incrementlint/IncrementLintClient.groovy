@@ -30,6 +30,7 @@ class IncrementLintClient extends LintGradleClient {
 
     private List<String> getPostCommitChange() {
         ArrayList<String> filterList = new ArrayList<String>()
+
         try {
             String projectDir = modelProject.getBuildFolder().getParentFile().getAbsolutePath()
             String command = "git diff --name-only --diff-filter=ACMRTUXB HEAD~0 $projectDir"
@@ -37,6 +38,8 @@ class IncrementLintClient extends LintGradleClient {
             if (changeInfo == null || changeInfo.empty) {
                 return filterList
             }
+            System.out.println("==== change file list ====")
+            System.out.println("project : " + modelProject.name)
             System.out.println(changeInfo)
             String[] lines = changeInfo.split("\\n")
             return lines.toList()
