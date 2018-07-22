@@ -16,5 +16,13 @@
     "methodByClass": "android.util.Log",
     "message": "请使用日志工具类",
     "severity": "warning"
+  },
+
+  {
+    "method": ["showSomething"],
+    "methodByClass": "com.paincker.lint.demo.MethodTest",
+    "message": "不能直接调用，需要catch",
+    "exception": "java.lang.RuntimeException",
+    "severity": "warning"
   }
 ]

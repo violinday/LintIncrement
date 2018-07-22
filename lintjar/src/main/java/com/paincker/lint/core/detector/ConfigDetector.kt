@@ -35,6 +35,10 @@ class ConfigDetector : Detector(), Detector.UastScanner, Detector.ClassScanner {
                 val config = ConfigUtil.getConfigByConstruction(className, this.config.configs)
                         ?: return
                 if (context!!.evaluator.isMemberInClass(constructor, className)) {
+                    if (config.exception != null) {
+                        context.report(HANDLE_EXCEPTION_ISSUE, node, context.getLocation(node?.resolve()!!), config.message)
+                        return
+                    }
                     context.report(CONSTRUCTOR_ISSUE, node, context.getLocation(node?.resolve()!!), config.message)
                 }
             }

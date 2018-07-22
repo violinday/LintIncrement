@@ -1,6 +1,7 @@
 import com.lewin.incrementlint.IncrementLintPlugin
 
 apply plugin: 'com.android.application'
+apply plugin: 'kotlin-android'
 apply plugin: IncrementLintPlugin
 
 android {
@@ -38,4 +39,8 @@ dependencies {
     //    compile project(path: ':lintaar')
     lintChecks project(":lintjar")
     implementation project(':libaraytest')
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+}
+repositories {
+    mavenCentral()
 }
