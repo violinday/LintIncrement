@@ -1,24 +1,35 @@
 #!/usr/bin/env bash
 
 REPO_ROOT_DIR="$(git rev-parse --show-toplevel)"
-
 files=$(git diff --name-only --diff-filter=ACMRTUXB HEAD~0)
-
-#echo ${files}
-
-./gradlew LintIncrementTaskDebug
-
-OUTPUT=$(./gradlew LintIncrementTaskDebug | grep "Lint found" 2>&1)
-
-ERROR=$(echo $OUTPUT|grep -o '[0-9]\+' 2>&1)
-
-ARR=($ERROR)
-
-for DATA in ${ARR[@]}
+lint_result="$(./gradlew LintIncrementTaskDebug | awk '/Lint found|Wrote HTML/' | sed 's/[[:space:]]//g' 2>&1)"
+echo ${lint_result}
+arr_lint_result=($lint_result)
+length_lint_result=${#arr_lint_result[@]}
+echo ${length_lint_result}
+echo ${arr_lint_result[0]}
+echo ${arr_lint_result[1]}
+echo ${arr_lint_result[2]}
+echo ${arr_lint_result[3]}
+html=""
+for((i=0;i<$length_lint_result;i++));
 do
-    if [ "$DATA" -ne 0 ];
-    then
-        open "${REPO_ROOT_DIR}/app/build/reports/lint-results-debug.html"
-        exit 1
+    data=${arr_lint_result[i]}
+    echo ${data}
+    if [[ $data == W* ]]; then
+        html=${data##*file://}
+        echo ${html}
+    else
+        error=$(echo ${data}|grep -o '[0-9]\+' 2>&1)
+        ARR=($error)
+        for data_error in ${ARR[@]}
+        do
+            if [ "$data_error" -ne 0 ];
+            then
+                open ${html}
+                break
+            fi
+        done
     fi
+
 done
