@@ -9,7 +9,7 @@ android {
     buildToolsVersion '26.0.2'
 
     defaultConfig {
-        applicationId "com.paincker.lint.demo"
+        applicationId "com.lewin.lint.demo"
         minSdkVersion 14
         targetSdkVersion 23
         versionCode 1

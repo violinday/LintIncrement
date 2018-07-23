@@ -1,4 +1,4 @@
-package com.paincker.lint.demo
+package com.lewin.lint.demo
 
 /**
  * Created by Lewin on 2018/7/22.

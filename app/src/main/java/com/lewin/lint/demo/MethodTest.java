@@ -1,4 +1,4 @@
-package com.paincker.lint.demo;
+package com.lewin.lint.demo;
 
 public class MethodTest {
 

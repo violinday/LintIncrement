@@ -1,10 +1,8 @@
-package com.paincker.lint.demo;
+package com.lewin.lint.demo;
 
 import android.app.Activity;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
