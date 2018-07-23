@@ -1,11 +1,14 @@
 package com.paincker.lint.core.detector
 
+import com.android.tools.lint.client.api.UElementHandler
 import com.android.tools.lint.detector.api.*
+import com.intellij.psi.JavaElementVisitor
 import com.intellij.psi.PsiMethod
+import com.intellij.psi.PsiMethodCallExpression
+import com.paincker.lint.core.config.Config
 import com.paincker.lint.core.config.ConfigUtil
 import com.paincker.lint.core.config.LintConfig
-import org.jetbrains.uast.UCallExpression
-import org.jetbrains.uast.UClass
+import org.jetbrains.uast.*
 
 /**
  * Created by haiyang_tan on 2018/7/13.
@@ -36,10 +39,14 @@ class ConfigDetector : Detector(), Detector.UastScanner, Detector.ClassScanner {
                         ?: return
                 if (context!!.evaluator.isMemberInClass(constructor, className)) {
                     if (config.exception != null) {
-                        context.report(HANDLE_EXCEPTION_ISSUE, node, context.getLocation(node?.resolve()!!), config.message)
+                        context.report(HANDLE_EXCEPTION_ISSUE, node,
+                                context.getCallLocation(node!!, false, false),
+                                config.message)
                         return
                     }
-                    context.report(CONSTRUCTOR_ISSUE, node, context.getLocation(node?.resolve()!!), config.message)
+                    context.report(CONSTRUCTOR_ISSUE, node,
+                            context.getCallLocation(node!!, false, false),
+                            config.message)
                 }
             }
         }
@@ -51,21 +58,27 @@ class ConfigDetector : Detector(), Detector.UastScanner, Detector.ClassScanner {
         return ConfigUtil.getMethodClasses(config.configs)
     }
 
+    override fun visitMethod(context: JavaContext?, visitor: JavaElementVisitor?, call: PsiMethodCallExpression?, method: PsiMethod?) {
+        super.visitMethod(context, visitor, call, method)
+    }
+
     override fun visitMethod(context: JavaContext?, node: UCallExpression?, method: PsiMethod?) {
         val findConfigs = ConfigUtil.getConfigByMethod(method!!.name, this.config.configs)
         if (findConfigs != null && !findConfigs.isEmpty()) {
             for (config in findConfigs) {
                 if (context!!.evaluator.isMemberInClass(method, config.methodByClass)) {
-                    if (config.exception != null) {
+                    if (inCatchConfigException(node, config)) {
                         context.report(HANDLE_EXCEPTION_ISSUE, node, context.getLocation(method), config.message)
                         return
                     }
-                    context.report(METHOD_ISSUE, node, context.getLocation(method), config.message)
+                    context.report(METHOD_ISSUE, node, context.getCallLocation(node!!, false,true), config.message)
                     return
                 }
             }
         }
     }
+
+
 
     /** ================================== super class ============================================ **/
 
@@ -74,35 +87,43 @@ class ConfigDetector : Detector(), Detector.UastScanner, Detector.ClassScanner {
     }
 
     override fun visitClass(context: JavaContext?, declaration: UClass?) {
+        val isAnonymous = declaration is UAnonymousClass
+
         val configs = this.config.configs
-        var isFindSuperClass = false
         for (config in configs) {
             if (config.superClass != null ) {
-                val extendsList = declaration?.extendsList
-                isFindSuperClass = false
-                if (extendsList != null) {
-                    val elements = extendsList.referenceElements
-                    if (elements.isNotEmpty()) {
-                        for (element in elements) {
-                            if (element.qualifiedName == config.superClass) {
-                                isFindSuperClass = true
-                            }
-                        }
+                if (context!!.evaluator.inheritsFrom(declaration, config.superClass, false)) {
+                    val invocation =  declaration?.getParentOfType<UObjectLiteralExpression>(true)
+                    val location = if (isAnonymous && invocation != null) {
+                        context.getCallLocation(invocation, false, false)
+                    } else {
+                        context.getNameLocation(declaration!!)
                     }
-                }
-                if (isFindSuperClass) {
-                    val location = context!!.getLocation(declaration?.uastAnchor!!)
                     if (config.exception != null) {
                         context.report(HANDLE_EXCEPTION_ISSUE, declaration, location, config.message)
                         return
                     }
                     context.report(SUPER_CLASS_ISSUE, declaration, location, config.message)
+                    return
                 }
-                return
             }
         }
     }
 
+    private fun inCatchConfigException(scope: UExpression?, config: Config): Boolean {
+        if (config.exception == null) {
+            return false
+        }
+        val surroundingCatchSection = scope!!.getParentOfType<UCatchClause>(true)
+        if (surroundingCatchSection != null) {
+            for (t in surroundingCatchSection.types) {
+                if (t.equalsToText(config.exception)) {
+                    return true
+                }
+            }
+        }
+        return false
+    }
 
     companion object {
 

@@ -20,15 +20,6 @@ public class ConstructionTest {
         }).run();
     }
 
-//    public static void testSuperThread2() {
-//        new MyThread(new Runnable(){
-//            @Override
-//            public void run() {
-//
-//            }
-//        }).run();
-//    }
-
     private static class MyThread extends Thread {
         public MyThread(Runnable runnable) {
             super(runnable);
