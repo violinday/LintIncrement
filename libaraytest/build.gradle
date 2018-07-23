@@ -1,6 +1,6 @@
-import com.lewin.incrementlint.IncrementLintPlugin
+//import com.lewin.incrementlint.IncrementLintPlugin
 apply plugin: 'com.android.library'
-apply plugin: IncrementLintPlugin
+//apply plugin: IncrementLintPlugin
 
 android {
     compileSdkVersion 28

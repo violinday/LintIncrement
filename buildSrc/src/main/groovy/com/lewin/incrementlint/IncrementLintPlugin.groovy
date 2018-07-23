@@ -2,7 +2,9 @@ package com.lewin.incrementlint
 
 import com.android.build.gradle.AndroidConfig
 import com.android.build.gradle.AppExtension
+import com.android.build.gradle.BasePlugin
 import com.android.build.gradle.LibraryExtension
+import com.android.build.gradle.LibraryPlugin
 import com.android.build.gradle.TestPlugin
 import com.android.build.gradle.api.ApplicationVariant
 import com.android.build.gradle.api.LibraryVariant
@@ -23,11 +25,11 @@ import java.lang.reflect.Field
 /**
  * Created by haiyang_tan on 2018/7/17.
  */
-class IncrementLintPlugin extends TestPlugin {
+class IncrementLintPlugin extends LibraryPlugin {
 
     @Inject
-    IncrementLintPlugin(Instantiator instantiator, ToolingModelBuilderRegistry registry) {
-        super(instantiator, registry)
+    IncrementLintPlugin(ToolingModelBuilderRegistry registry) {
+        super(registry)
     }
 
     @Override
@@ -46,7 +48,7 @@ class IncrementLintPlugin extends TestPlugin {
                 if (it instanceof ApplicationVariantImpl) {
                     ApplicationVariantImpl variantImpl = (ApplicationVariantImpl) it
                     def globalScope = variantImpl.variantData.scope
-                    project.getTasks().create(globalScope.getTaskName(IncrementLintTask.NAME), IncrementLintTask.class, new IncrementLintTask.VitalConfigAction(globalScope, getProject()))
+//                    project.getTasks().create(globalScope.getTaskName(IncrementLintTask.NAME), IncrementLintTask.class, new IncrementLintTask.VitalConfigAction(globalScope, getProject()))
                 }
             }
         } else if (baseExtension instanceof LibraryExtension) {
@@ -57,7 +59,7 @@ class IncrementLintPlugin extends TestPlugin {
                 if (it instanceof LibraryVariantImpl) {
                     LibraryVariantImpl variantImpl = (LibraryVariantImpl) it
                     def globalScope = getVariantDataByLibrary(variantImpl)
-                    project.getTasks().create(globalScope.scope.getTaskName(IncrementLintTask.NAME), IncrementLintTask.class, new IncrementLintTask.VitalConfigAction(globalScope.scope, getProject()))
+//                    project.getTasks().create(globalScope.scope.getTaskName(IncrementLintTask.NAME), IncrementLintTask.class, new IncrementLintTask.VitalConfigAction(globalScope.scope, getProject()))
                 }
             }
         }

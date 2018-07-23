@@ -1,9 +1,11 @@
 package com.lewin.incrementlint;
 
 import com.android.annotations.NonNull;
+import com.android.annotations.Nullable;
 import com.android.build.gradle.internal.scope.VariantScope;
 import com.android.build.gradle.tasks.GroovyGradleDetector;
 import com.android.build.gradle.tasks.LintBaseTask;
+import com.android.build.gradle.tasks.LintPerVariantTask;
 import com.android.builder.model.AndroidProject;
 import com.android.builder.model.Variant;
 import com.android.tools.lint.LintCliFlags;
@@ -37,33 +39,39 @@ public class IncrementLintTask extends LintBaseTask{
 
     private VariantInputs variantInputs;
 
-    @Override
-    protected void setFatalOnly(boolean fatalOnly) {
-        super.setFatalOnly(fatalOnly);
-        this.fatalOnly = fatalOnly;
-    }
-
-    public static void logInfo(Project project, String message) {
-        project.getLogger().info(NAME, message);
-    }
-
-    private static BuiltinIssueRegistry createIssueRegistry() {
-        return new LintGradleIssueRegistry();
-    }
 
     @TaskAction
     public void lint() throws IOException {
-        AndroidProject modelProject = createAndroidProject(getProject());
-        for (Variant variant : modelProject.getVariants()) {
-            if (variant.getName().equals(getVariantName())) {
-                lintSingleVariant(modelProject, variant);
-                break;
-            }
+        runLint(new LintPerVariantTaskDescriptor());
+    }
+
+    private class LintPerVariantTaskDescriptor extends LintBaseTaskDescriptor {
+        @Nullable
+        @Override
+        public String getVariantName() {
+            return IncrementLintTask.this.getVariantName();
+        }
+
+        @Nullable
+        @Override
+        public VariantInputs getVariantInputs(@NonNull String variantName) {
+            assert variantName.equals(getVariantName());
+            return variantInputs;
+        }
+
+        @Override
+        public boolean isFatalOnly() {
+            return fatalOnly;
         }
     }
 
     public void lintSingleVariant(@NonNull AndroidProject modelProject, @NonNull Variant variant) {
         runLint(modelProject, variant, variantInputs, true);
+    }
+
+    @Override
+    protected void runLint(LintBaseTaskDescriptor descriptor) {
+        super.runLint(descriptor);
     }
 
     @Override
@@ -119,32 +127,6 @@ public class IncrementLintTask extends LintBaseTask{
         return variantInputs.getAllInputs();
     }
 
-    private static class LintGradleIssueRegistry extends BuiltinIssueRegistry {
-        private boolean mInitialized;
-
-        public LintGradleIssueRegistry() {}
-
-        @NonNull
-        @Override
-        public List<Issue> getIssues() {
-            List<Issue> issues = super.getIssues();
-            if (!mInitialized) {
-                mInitialized = true;
-                for (Issue issue : issues) {
-                    if (issue.getImplementation().getDetectorClass() == GradleDetector.class) {
-                        issue.setImplementation(IMPLEMENTATION);
-                    }
-                }
-            }
-
-            return issues;
-        }
-    }
-
-    static final Implementation IMPLEMENTATION = new Implementation(
-            GroovyGradleDetector.class,
-            Scope.GRADLE_SCOPE);
-
     public static class VitalConfigAction extends BaseConfigAction<IncrementLintTask> {
 
         private final VariantScope scope;
@@ -177,7 +159,7 @@ public class IncrementLintTask extends LintBaseTask{
 
             task.variantInputs = new VariantInputs(scope);
 
-            task.setFatalOnly(false);
+            task.fatalOnly = false;
             task.setDescription(
                     "Runs lint on just the fatal issues in the " + variantName + " build.");
             project.getTasks().add(task);
