@@ -1,7 +1,7 @@
-package com.paincker.lint.core.config;
+package com.lewin.lint.core.config;
 
 import com.android.tools.lint.detector.api.Context;
-import com.paincker.lint.core.util.GsonUtil;
+import com.lewin.lint.core.util.GsonUtil;
 
 import java.io.BufferedReader;
 import java.io.File;

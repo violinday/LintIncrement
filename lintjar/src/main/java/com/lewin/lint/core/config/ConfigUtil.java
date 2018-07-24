@@ -1,4 +1,4 @@
-package com.paincker.lint.core.config;
+package com.lewin.lint.core.config;
 
 import com.android.annotations.NonNull;
 import com.android.annotations.Nullable;

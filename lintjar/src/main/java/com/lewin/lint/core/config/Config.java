@@ -1,4 +1,4 @@
-package com.paincker.lint.core.config;
+package com.lewin.lint.core.config;
 
 import java.util.List;
 

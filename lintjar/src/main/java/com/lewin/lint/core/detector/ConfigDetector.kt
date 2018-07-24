@@ -1,13 +1,11 @@
-package com.paincker.lint.core.detector
+package com.lewin.lint.core.detector
 
-import com.android.tools.lint.client.api.UElementHandler
 import com.android.tools.lint.detector.api.*
 import com.intellij.psi.JavaElementVisitor
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiMethodCallExpression
-import com.paincker.lint.core.config.Config
-import com.paincker.lint.core.config.ConfigUtil
-import com.paincker.lint.core.config.LintConfig
+import com.lewin.lint.core.config.ConfigUtil
+import com.lewin.lint.core.config.LintConfig
 import org.jetbrains.uast.*
 
 /**
