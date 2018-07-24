@@ -16,7 +16,7 @@ public class MainActivity extends Activity {
         ConstructionTest.testThread();
         ConstructionTest.testSuperThread();
 
-        ExceptionTest.Companion.showSomething();
+        ExceptionTest.doSomething();
 
     }
 

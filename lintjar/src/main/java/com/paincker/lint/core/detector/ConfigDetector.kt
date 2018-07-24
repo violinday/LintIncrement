@@ -38,12 +38,6 @@ class ConfigDetector : Detector(), Detector.UastScanner, Detector.ClassScanner {
                 val config = ConfigUtil.getConfigByConstruction(className, this.config.configs)
                         ?: return
                 if (context!!.evaluator.isMemberInClass(constructor, className)) {
-                    if (config.exception != null) {
-                        context.report(HANDLE_EXCEPTION_ISSUE, node,
-                                context.getCallLocation(node!!, false, false),
-                                config.message)
-                        return
-                    }
                     context.report(CONSTRUCTOR_ISSUE, node,
                             context.getCallLocation(node!!, false, false),
                             config.message)
@@ -67,8 +61,8 @@ class ConfigDetector : Detector(), Detector.UastScanner, Detector.ClassScanner {
         if (findConfigs != null && !findConfigs.isEmpty()) {
             for (config in findConfigs) {
                 if (context!!.evaluator.isMemberInClass(method, config.methodByClass)) {
-                    if (inCatchConfigException(node, config)) {
-                        context.report(HANDLE_EXCEPTION_ISSUE, node, context.getLocation(method), config.message)
+                    if (config.exception != null && !inCatchConfigException(node, config.exception)) {
+                        context.report(HANDLE_EXCEPTION_ISSUE, node, context.getCallLocation(node!!, false,false), config.message)
                         return
                     }
                     context.report(METHOD_ISSUE, node, context.getCallLocation(node!!, false,true), config.message)
@@ -99,10 +93,6 @@ class ConfigDetector : Detector(), Detector.UastScanner, Detector.ClassScanner {
                     } else {
                         context.getNameLocation(declaration!!)
                     }
-                    if (config.exception != null) {
-                        context.report(HANDLE_EXCEPTION_ISSUE, declaration, location, config.message)
-                        return
-                    }
                     context.report(SUPER_CLASS_ISSUE, declaration, location, config.message)
                     return
                 }
@@ -110,14 +100,11 @@ class ConfigDetector : Detector(), Detector.UastScanner, Detector.ClassScanner {
         }
     }
 
-    private fun inCatchConfigException(scope: UExpression?, config: Config): Boolean {
-        if (config.exception == null) {
-            return false
-        }
+    private fun inCatchConfigException(scope: UExpression?, exception: String): Boolean {
         val surroundingCatchSection = scope!!.getParentOfType<UCatchClause>(true)
         if (surroundingCatchSection != null) {
             for (t in surroundingCatchSection.types) {
-                if (t.equalsToText(config.exception)) {
+                if (t.equalsToText(exception)) {
                     return true
                 }
             }
