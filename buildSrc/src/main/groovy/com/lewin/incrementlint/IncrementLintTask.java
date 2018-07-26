@@ -31,6 +31,7 @@ public class IncrementLintTask extends LintBaseTask{
 
     public static final String NAME = "LintIncrementTask";
     private boolean fatalOnly;
+    private List<String> changeFiles;
 
     public IncrementLintTask() {
     }
@@ -49,6 +50,10 @@ public class IncrementLintTask extends LintBaseTask{
 
     private static BuiltinIssueRegistry createIssueRegistry() {
         return new LintGradleIssueRegistry();
+    }
+
+    public void setChangeFiles(List<String> changeFiles) {
+        this.changeFiles = changeFiles;
     }
 
     @TaskAction
@@ -79,7 +84,8 @@ public class IncrementLintTask extends LintBaseTask{
                         sdkHome,
                         variant,
                         variantInputs,
-                        getBuildTools());
+                        getBuildTools(),
+                        changeFiles);
         if (fatalOnly) {
             flags.setFatalOnly(true);
         }
@@ -149,11 +155,13 @@ public class IncrementLintTask extends LintBaseTask{
 
         private final VariantScope scope;
         private final Project project;
+        private final List<String> changeFiles;
 
-        public VitalConfigAction(@NonNull VariantScope scope, Project project) {
+        public VitalConfigAction(@NonNull VariantScope scope, Project project, List<String> changeFiles) {
             super(scope.getGlobalScope());
             this.scope = scope;
             this.project = project;
+            this.changeFiles = changeFiles;
         }
 
         @NonNull
@@ -176,7 +184,7 @@ public class IncrementLintTask extends LintBaseTask{
             task.setVariantName(variantName);
 
             task.variantInputs = new VariantInputs(scope);
-
+            task.changeFiles = changeFiles;
             task.setFatalOnly(false);
             task.setDescription(
                     "Runs lint on just the fatal issues in the " + variantName + " build.");

@@ -14,11 +14,19 @@ class IncrementLintClient extends LintGradleClient {
 
     private org.gradle.api.Project gradleProject
     private AndroidProject modelProject
+    private List<String> changeFiles
 
-    IncrementLintClient(IssueRegistry registry, LintCliFlags flags, org.gradle.api.Project gradleProject, AndroidProject modelProject, File sdkHome, Variant variant, LintBaseTask.VariantInputs variantInputs, BuildToolInfo buildToolInfo) {
+    IncrementLintClient(IssueRegistry registry,
+                        LintCliFlags flags,
+                        org.gradle.api.Project gradleProject,
+                        AndroidProject modelProject,
+                        File sdkHome, Variant variant,
+                        LintBaseTask.VariantInputs variantInputs,
+                        BuildToolInfo buildToolInfo, List<String> changeFiles) {
         super(registry, flags, gradleProject, modelProject, sdkHome, variant, variantInputs, buildToolInfo)
         this.gradleProject = gradleProject
         this.modelProject = modelProject
+        this.changeFiles = changeFiles
     }
 
     @Override
@@ -28,28 +36,10 @@ class IncrementLintClient extends LintGradleClient {
         return lintRequest
     }
 
-    private List<String> getPostCommitChange() {
-        ArrayList<String> filterList = new ArrayList<String>()
 
-        try {
-            String projectDir = modelProject.getBuildFolder().getParentFile().getAbsolutePath()
-            String command = "git diff --name-only --diff-filter=ACMRTUXB HEAD~0 $projectDir"
-            String changeInfo = command.execute(null, gradleProject.getRootDir()).text.trim()
-            if (changeInfo == null || changeInfo.empty) {
-                return filterList
-            }
-            System.out.println("==== change file list ====")
-            System.out.println("project : " + modelProject.name)
-            System.out.println(changeInfo)
-            String[] lines = changeInfo.split("\\n")
-            return lines.toList()
-        } catch (Exception ignored) {
-            return filterList
-        }
-    }
 
     private addChangeFile(LintRequest lintRequest) {
-        List<String> commitChanges = getPostCommitChange()
+        List<String> commitChanges = changeFiles
         for (String commitChange : commitChanges) {
             for (Project project : lintRequest.getProjects()) {
                 project.addFile(new File(commitChange))//加入要扫描的文件

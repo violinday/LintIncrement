@@ -11,6 +11,6 @@ class CustomIssueRegistry : IssueRegistry() {
     @Synchronized
     override fun getIssues(): List<Issue> {
         println("==== my lint start ====")
-        return Arrays.asList(ConfigDetector.CONSTRUCTOR_ISSUE, ConfigDetector.SUPER_CLASS_ISSUE)
+        return Arrays.asList(ConfigDetector.CONSTRUCTOR_ERROR_ISSUE, ConfigDetector.SUPER_CLASS_ERROR_ISSUE)
     }
 }

@@ -1,5 +1,6 @@
 package com.lewin.incrementlint
 
+import com.android.annotations.NonNull
 import com.android.build.gradle.AndroidConfig
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.LibraryExtension
@@ -38,6 +39,10 @@ class IncrementLintPlugin extends TestPlugin {
 
     @Override
     void apply(Project project) {
+        def commitChanges = getPostCommitChange(project)
+        if (commitChanges.isEmpty()) {
+            return
+        }
         def baseExtension = project.extensions.getByName("android")
         if (baseExtension instanceof AppExtension) {
             AppExtension extension = (AppExtension) baseExtension
@@ -46,7 +51,9 @@ class IncrementLintPlugin extends TestPlugin {
                 if (it instanceof ApplicationVariantImpl) {
                     ApplicationVariantImpl variantImpl = (ApplicationVariantImpl) it
                     def globalScope = variantImpl.variantData.scope
-                    project.getTasks().create(globalScope.getTaskName(IncrementLintTask.NAME), IncrementLintTask.class, new IncrementLintTask.VitalConfigAction(globalScope, getProject()))
+                    project.getTasks().create(globalScope.getTaskName(IncrementLintTask.NAME),
+                            IncrementLintTask.class,
+                            new IncrementLintTask.VitalConfigAction(globalScope, getProject(), commitChanges))
                 }
             }
         } else if (baseExtension instanceof LibraryExtension) {
@@ -57,7 +64,9 @@ class IncrementLintPlugin extends TestPlugin {
                 if (it instanceof LibraryVariantImpl) {
                     LibraryVariantImpl variantImpl = (LibraryVariantImpl) it
                     def globalScope = getVariantDataByLibrary(variantImpl)
-                    project.getTasks().create(globalScope.scope.getTaskName(IncrementLintTask.NAME), IncrementLintTask.class, new IncrementLintTask.VitalConfigAction(globalScope.scope, getProject()))
+                    project.getTasks().create(globalScope.scope.getTaskName(IncrementLintTask.NAME),
+                            IncrementLintTask.class,
+                            new IncrementLintTask.VitalConfigAction(globalScope.scope, getProject(), commitChanges))
                 }
             }
         }
@@ -76,6 +85,32 @@ class IncrementLintPlugin extends TestPlugin {
         Field field = libraryVariantClass.getDeclaredField("variantData")
         field.setAccessible(true)
         return field.get(variant)
+    }
+
+    /**
+     * 获取当前Project发生改变的文件
+     * @param project
+     * @return
+     */
+    @NonNull
+    private List<String> getPostCommitChange(Project project) {
+        ArrayList<String> filterList = new ArrayList<String>()
+
+        try {
+            String projectDir = project.getBuildDir().getParentFile().getAbsolutePath()
+            String command = "git diff --name-only --diff-filter=ACMRTUXB HEAD~0 $projectDir"
+            String changeInfo = command.execute(null, gradleProject.getRootDir()).text.trim()
+            if (changeInfo == null || changeInfo.empty) {
+                return filterList
+            }
+            System.out.println("==== change file list ====")
+            System.out.println("project : " + modelProject.name)
+            System.out.println(changeInfo)
+            String[] lines = changeInfo.split("\\n")
+            return lines.toList()
+        } catch (Exception ignored) {
+            return filterList
+        }
     }
 
 }

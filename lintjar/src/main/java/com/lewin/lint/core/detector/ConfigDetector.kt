@@ -36,7 +36,7 @@ class ConfigDetector : Detector(), Detector.UastScanner, Detector.ClassScanner {
                 val config = ConfigUtil.getConfigByConstruction(className, this.config.configs)
                         ?: return
                 if (context!!.evaluator.isMemberInClass(constructor, className)) {
-                    context.report(CONSTRUCTOR_ISSUE, node,
+                    context.report(CONSTRUCTOR_ERROR_ISSUE, node,
                             context.getCallLocation(node!!, false, false),
                             config.message)
                 }
@@ -60,10 +60,10 @@ class ConfigDetector : Detector(), Detector.UastScanner, Detector.ClassScanner {
             for (config in findConfigs) {
                 if (context!!.evaluator.isMemberInClass(method, config.methodByClass)) {
                     if (config.exception != null && !inCatchConfigException(node, config.exception)) {
-                        context.report(HANDLE_EXCEPTION_ISSUE, node, context.getCallLocation(node!!, false,false), config.message)
+                        context.report(HANDLE_EXCEPTION_ERROR_ISSUE, node, context.getCallLocation(node!!, false,false), config.message)
                         return
                     }
-                    context.report(METHOD_ISSUE, node, context.getCallLocation(node!!, false,true), config.message)
+                    context.report(METHOD_ERROR_ISSUE, node, context.getCallLocation(node!!, false,true), config.message)
                     return
                 }
             }
@@ -91,7 +91,7 @@ class ConfigDetector : Detector(), Detector.UastScanner, Detector.ClassScanner {
                     } else {
                         context.getNameLocation(declaration!!)
                     }
-                    context.report(SUPER_CLASS_ISSUE, declaration, location, config.message)
+                    context.report(SUPER_CLASS_ERROR_ISSUE, declaration, location, config.message)
                     return
                 }
             }
@@ -112,7 +112,7 @@ class ConfigDetector : Detector(), Detector.UastScanner, Detector.ClassScanner {
 
     companion object {
 
-        val CONSTRUCTOR_ISSUE = Issue.create(
+        val CONSTRUCTOR_ERROR_ISSUE = Issue.create(
                 "CustomConstructorError",
                 "Custom check exception",
                 "自定义检查异常，需要改正",
@@ -122,17 +122,37 @@ class ConfigDetector : Detector(), Detector.UastScanner, Detector.ClassScanner {
                 Implementation(ConfigDetector::class.java, Scope.JAVA_FILE_SCOPE)
         )
 
-        val SUPER_CLASS_ISSUE = Issue.create(
+        val CONSTRUCTOR_WARN_ISSUE = Issue.create(
+                "CustomConstructorError",
+                "Custom check exception",
+                "自定义检查异常，需要改正",
+                Category.SECURITY,
+                5,
+                Severity.WARNING,
+                Implementation(ConfigDetector::class.java, Scope.JAVA_FILE_SCOPE)
+        )
+
+        val SUPER_CLASS_ERROR_ISSUE = Issue.create(
                 "CustomSuperClassError",
                 "Custom check exception",
                 "自定义检查异常，需要改正",
                 Category.SECURITY,
                 6,
-                Severity.ERROR,
+                Severity.WARNING,
                 Implementation(ConfigDetector::class.java, Scope.JAVA_FILE_SCOPE)
         )
 
-        val HANDLE_EXCEPTION_ISSUE = Issue.create(
+        val SUPER_CLASS_WARN_ISSUE = Issue.create(
+                "CustomSuperClassError",
+                "Custom check exception",
+                "自定义检查异常，需要改正",
+                Category.SECURITY,
+                5,
+                Severity.WARNING,
+                Implementation(ConfigDetector::class.java, Scope.JAVA_FILE_SCOPE)
+        )
+
+        val HANDLE_EXCEPTION_ERROR_ISSUE = Issue.create(
                 "CustomHandleExceptionError",
                 "Custom check exception",
                 "自定义检查异常，需要改正",
@@ -142,13 +162,33 @@ class ConfigDetector : Detector(), Detector.UastScanner, Detector.ClassScanner {
                 Implementation(ConfigDetector::class.java, Scope.JAVA_FILE_SCOPE)
         )
 
-        val METHOD_ISSUE = Issue.create(
+        val HANDLE_EXCEPTION_WARN_ISSUE = Issue.create(
+                "CustomHandleExceptionError",
+                "Custom check exception",
+                "自定义检查异常，需要改正",
+                Category.SECURITY,
+                5,
+                Severity.WARNING,
+                Implementation(ConfigDetector::class.java, Scope.JAVA_FILE_SCOPE)
+        )
+
+        val METHOD_ERROR_ISSUE = Issue.create(
                 "CustomMethodError",
                 "Custom check exception",
                 "自定义检查异常，需要改正",
                 Category.SECURITY,
                 6,
                 Severity.ERROR,
+                Implementation(ConfigDetector::class.java, Scope.JAVA_FILE_SCOPE)
+        )
+
+        val METHOD_WARN_ISSUE = Issue.create(
+                "CustomMethodError",
+                "Custom check exception",
+                "自定义检查异常，需要改正",
+                Category.SECURITY,
+                5,
+                Severity.WARNING,
                 Implementation(ConfigDetector::class.java, Scope.JAVA_FILE_SCOPE)
         )
     }

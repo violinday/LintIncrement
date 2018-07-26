@@ -16,7 +16,11 @@ public class MainActivity extends Activity {
         ConstructionTest.testThread();
         ConstructionTest.testSuperThread();
 
-        ExceptionTest.doSomething();
+        try {
+            ExceptionTest.doSomething();
+        }catch (RuntimeException e) {
+
+        }
 
     }
 
