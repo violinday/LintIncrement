@@ -59,12 +59,15 @@ class ConfigDetector : Detector(), Detector.UastScanner, Detector.ClassScanner {
         if (findConfigs != null && !findConfigs.isEmpty()) {
             for (config in findConfigs) {
                 if (context!!.evaluator.isMemberInClass(method, config.methodByClass)) {
-                    if (config.exception != null && !inCatchConfigException(node, config.exception)) {
-                        context.report(HANDLE_EXCEPTION_ERROR_ISSUE, node, context.getCallLocation(node!!, false,false), config.message)
+                    if (config.exception != null) {
+                        if (!inCatchConfigException(node, config.exception)) {
+                            context.report(HANDLE_EXCEPTION_ERROR_ISSUE, node, context.getCallLocation(node!!, false,false), config.message)
+                            return
+                        }
+                    } else {
+                        context.report(METHOD_ERROR_ISSUE, node, context.getCallLocation(node!!, false, true), config.message)
                         return
                     }
-                    context.report(METHOD_ERROR_ISSUE, node, context.getCallLocation(node!!, false,true), config.message)
-                    return
                 }
             }
         }
