@@ -20,6 +20,10 @@ public final class LintConfig {
 
     private static final String LINT_CONFIG_FILE = "tt-lint-config.json";
 
+    public static final String WARNING = "warning";
+
+    public static final String ERROR = "error";
+
     private final List<Config> mConfigs;
 
     public LintConfig(Context context) {

@@ -4,6 +4,7 @@ import com.android.tools.lint.detector.api.*
 import com.intellij.psi.JavaElementVisitor
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiMethodCallExpression
+import com.lewin.lint.core.config.Config
 import com.lewin.lint.core.config.ConfigUtil
 import com.lewin.lint.core.config.LintConfig
 import org.jetbrains.uast.*
@@ -94,12 +95,14 @@ class ConfigDetector : Detector(), Detector.UastScanner, Detector.ClassScanner {
                     } else {
                         context.getNameLocation(declaration!!)
                     }
-                    context.report(SUPER_CLASS_ERROR_ISSUE, declaration, location, config.message)
+                    reportSuperClassIssue(config, context, declaration, location)
                     return
                 }
             }
         }
     }
+
+    /** ================================== utils ============================================ **/
 
     private fun inCatchConfigException(scope: UExpression?, exception: String): Boolean {
         val surroundingCatchSection = scope!!.getParentOfType<UCatchClause>(true)
@@ -111,6 +114,17 @@ class ConfigDetector : Detector(), Detector.UastScanner, Detector.ClassScanner {
             }
         }
         return false
+    }
+
+    private fun reportSuperClassIssue(config: Config,
+                                      context: JavaContext?,
+                                      declaration: UClass?,
+                                      location: Location?) {
+        if (LintConfig.WARNING.equals(config.severity))  {
+            context!!.report(SUPER_CLASS_WARN_ISSUE, declaration, location!!, config.message)
+        } else if (LintConfig.ERROR.equals(config.severity)) {
+            context!!.report(SUPER_CLASS_ERROR_ISSUE, declaration, location!!, config.message)
+        }
     }
 
     companion object {

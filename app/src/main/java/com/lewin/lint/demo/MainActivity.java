@@ -22,6 +22,9 @@ public class MainActivity extends Activity {
 
         }
 
+        String a = "111,111";
+        long b = Long.parseLong(a);
+
     }
 
 
