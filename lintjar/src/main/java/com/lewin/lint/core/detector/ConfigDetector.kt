@@ -4,6 +4,7 @@ import com.android.tools.lint.detector.api.*
 import com.intellij.psi.JavaElementVisitor
 import com.intellij.psi.PsiMethod
 import com.intellij.psi.PsiMethodCallExpression
+import com.lewin.lint.core.config.Config
 import com.lewin.lint.core.config.ConfigUtil
 import com.lewin.lint.core.config.LintConfig
 import org.jetbrains.uast.*
@@ -36,9 +37,8 @@ class ConfigDetector : Detector(), Detector.UastScanner, Detector.ClassScanner {
                 val config = ConfigUtil.getConfigByConstruction(className, this.config.configs)
                         ?: return
                 if (context!!.evaluator.isMemberInClass(constructor, className)) {
-                    context.report(CONSTRUCTOR_ERROR_ISSUE, node,
-                            context.getCallLocation(node!!, false, false),
-                            config.message)
+                    reportClassConstructorIssue(config, context, node,
+                            context.getCallLocation(node!!, false, false))
                 }
             }
         }
@@ -65,7 +65,7 @@ class ConfigDetector : Detector(), Detector.UastScanner, Detector.ClassScanner {
                             return
                         }
                     } else {
-                        context.report(METHOD_ERROR_ISSUE, node, context.getCallLocation(node!!, false, true), config.message)
+                        reportClassMethodIssue(config, context, node, context.getCallLocation(node!!, false, true))
                         return
                     }
                 }
@@ -94,24 +94,62 @@ class ConfigDetector : Detector(), Detector.UastScanner, Detector.ClassScanner {
                     } else {
                         context.getNameLocation(declaration!!)
                     }
-                    context.report(SUPER_CLASS_ERROR_ISSUE, declaration, location, config.message)
+                    reportSuperClassIssue(config, context, declaration, location)
                     return
                 }
             }
         }
     }
 
+    /** ================================== utils ============================================ **/
+
     private fun inCatchConfigException(scope: UExpression?, exception: String): Boolean {
-        val surroundingCatchSection = scope!!.getParentOfType<UCatchClause>(true)
-        if (surroundingCatchSection != null) {
-            for (t in surroundingCatchSection.types) {
-                if (t.equalsToText(exception)) {
-                    return true
+        val uTryExpression = scope!!.getParentOfType<UTryExpression>(true)
+        if (uTryExpression != null) {
+            for (t in uTryExpression.catchClauses) {
+                for (e in t.types) {
+                    if (e.equalsToText(exception)) {
+                        return true
+                    }
                 }
             }
         }
         return false
     }
+
+    private fun reportSuperClassIssue(config: Config,
+                                      context: JavaContext?,
+                                      declaration: UClass?,
+                                      location: Location?) {
+        if (LintConfig.WARNING == config.severity)  {
+            context!!.report(SUPER_CLASS_WARN_ISSUE, declaration, location!!, config.message)
+        } else if (LintConfig.ERROR == config.severity) {
+            context!!.report(SUPER_CLASS_ERROR_ISSUE, declaration, location!!, config.message)
+        }
+    }
+
+    private fun reportClassMethodIssue(config: Config,
+                                       context: JavaContext?,
+                                       node: UCallExpression?,
+                                       location: Location?) {
+        if (LintConfig.WARNING == config.severity)  {
+            context!!.report(METHOD_WARN_ISSUE, node, location!!, config.message)
+        } else if (LintConfig.ERROR == config.severity) {
+            context!!.report(METHOD_ERROR_ISSUE, node, location!!, config.message)
+        }
+    }
+
+    private fun reportClassConstructorIssue(config: Config,
+                                       context: JavaContext?,
+                                       node: UCallExpression?,
+                                       location: Location?) {
+        if (LintConfig.WARNING == config.severity)  {
+            context!!.report(CONSTRUCTOR_WARN_ISSUE, node, location!!, config.message)
+        } else if (LintConfig.ERROR == config.severity) {
+            context!!.report(CONSTRUCTOR_ERROR_ISSUE, node, location!!, config.message)
+        }
+    }
+
 
     companion object {
 

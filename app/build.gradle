@@ -40,6 +40,7 @@ dependencies {
     lintChecks project(":lintjar")
     implementation project(':libaraytest')
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    compile "com.android.support:support-annotations:26.0.2"
 }
 repositories {
     mavenCentral()
