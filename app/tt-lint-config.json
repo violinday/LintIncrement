@@ -28,7 +28,7 @@
 
   {
     "method": ["parseLong"],
-    "methodByClass": "java.lan.Long",
+    "methodByClass": "java.lang.Long",
     "message": "不能直接调用，需要catch",
     "exception": "java.lang.Exception",
     "severity": "error"
